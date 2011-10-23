@@ -1,0 +1,46 @@
+Must fit this example:
+
+
+Parsed: www.tacoma.washington.edu/calendar/
+	Pages Retrieved: 12
+	Average words per page: 321
+	Average URLs per page: 11
+	Keyword               Ave. hits per page       Total hits
+	  albatross               0.001                     3
+	  carrots                 0.01                      5
+	  everywhere              1.23                      19
+	  etc..........
+
+	  intelligence            0.000                     0
+
+	Page limit: 5000
+	Average parse time per page .001msec
+	Total running time:       0.96 sec
+
+
+So, this keeps track of its _childrens_ statistics, not its own. Children must contain a reference to their parent to modify these things. Or thiscan merely keep track of all the information, then create the children when it's done parsing?
+
+In his picturehttp://faculty.washington.edu/gmobus/Academics/TCSS422/Projects/program1.html the pageToRetrieve queue holds urls of pagesthat are allowed to retrieved and have not been visited.
+
+The pageRetriever produces a string or Scanner using Jsoup. Something probably needs to be synchronized so it doesn't screw up if Jsoup parser is not thread-safe.
+
+The pageBuffer Queue holds the strings or scanners. PageParsers take thestring or scanner and produce statistics. It also must add things to thequeue or return urls.
+
+Since the pageToRetrieve queue is already thread safe, perhaps it could contain the visited pages, disallowed domains, and disallowed pages sets.This implies it must be able to read the robot.txt or have someone tell it what is in rebot.txt in order for it to add new restrictions.
+
+Okay, a PageInfo doesn't need to worry about so much. A threaded object(the parser) will just have a pageInfo. There is no public constructor;simply ask for a new PageInfo. It has a dummy parent. The threaded object will give the PageInfo a Scanner, tels it to parse. PageInfo keeps track of how much time it takes to parse, its average words, etc. then_transmits this information back to its parent and forgets it_ and nulls the parent argument. The parent is responsible for summing up the statistics and whatnot. It needs a list of these statistics objects DAMMIT. Maybe it has a list of its children. that way PageInfo can ask privately what each of its childrens data is.
+
+PageInfo should be written in a way that it is easy to extend and add more data fields--just for fun.
+
+when is a pageInfo created? It seems it must be created when the PageInfoparses, or else there would be no way to tell it who its parent is? Or maybe there can be a constructor for PageInfo that tells it who its parent is. Trust the programmer to not lie who is a subpage of whom.What if link is to be ignored?  How does it get its scanner?
+
+Ignoring the ignored sites and domains and visited, here is what I have so far:
+1.  Give the PageToRetrieve queue a PageInfo object.  It checks to see if the Pages URL is disallowed, random shit, etc.
+
+PageRetriever knows the PageToRetrieve queue.  It takes from the front.  It immediately retrieves the robot.txt file and parses it.  If there is one, it tells the PageToRetrieve queue what pages to not visit.  If this page should not be visited, PageRetriever says so.  When the next pageRetriever asks for front, the PageToRetrieve queue must check again whether the page should be ignored.  Why check twice?  Only check when popping.
+
+If the PageRetriever does not find a robots file, it somehow setText for pageInfo.  Just be sure that the string is for the right URL and don't be paranoid.  It then chills in the pageBuffer.
+
+A parser thread takes the pageInfo out of the pageBuffer and tells it to parse itself.  It creates children and returns them or something.  Does not remember them.  At the same time, it tells its parent about itself and the parent adds it as a child.  child forgets parent.
+
+I misunderstood the example.
