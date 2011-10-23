@@ -1,8 +1,10 @@
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 /*
@@ -22,6 +24,7 @@ import org.jsoup.nodes.Document;
 public class JsoupFun {
 
 	/**
+	 * 
 	 * @param args
 	 */
 	// TODO TESTING COMPLETION DATE: 00-00-2011
@@ -30,7 +33,7 @@ public class JsoupFun {
 		// TODO Auto-generated method stub
 		String html = "<p>An <a href='http://example.com/'><b>example</b></a> link.</p>";
 		Document doc = null;
-		/*try {
+		try {
 			doc = Jsoup
 					.connect(
 							"http://faculty.washington.edu/gmobus/Academics/TCSS422/Projects/program1.html")
@@ -39,25 +42,24 @@ public class JsoupFun {
 			System.err.println(the_e);
 		}
 
-		Element link = doc.select("a").first();
 
-		String string = "THREAD";
+
 		String text = doc.body().text();
-		System.out.println(text.length());*/
+		System.out.println(text.length());
 		
 		
-		Scanner scanner = new Scanner("a ba  a\n c");
+		Scanner scanner = new Scanner(text);
 		Pattern pattern = Pattern.compile("\\s+");
 		scanner.useDelimiter(pattern);
 		String token;
 		Map<String, Integer> frequencies = new HashMap<String, Integer>();
-		frequencies.put("A", 0);
-		frequencies.put("B", 0);
+		frequencies.put("thread", 0);
+		frequencies.put("dynamics", 0);
 		frequencies.put("C", 0);
 		int total_words = 0;
 		while (scanner.hasNext()) {
 			total_words++;
-			token = (scanner.next().toUpperCase());
+			token = (scanner.next().toLowerCase());
 			Integer frequency = frequencies.get(token);
 			if (frequency != null) {
 				frequencies.put(token, frequency + 1);
