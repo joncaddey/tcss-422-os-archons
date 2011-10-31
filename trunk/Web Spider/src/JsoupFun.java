@@ -36,7 +36,7 @@ public class JsoupFun {
 		try {
 			doc = Jsoup
 					.connect(
-							"http://faculty.washington.edu/gmobus/Academics/TCSS422/Projects/program1.html")
+							"http://en.wikipedia.org/wiki/Sudoku_algorithms#Solving_Sudokus_by_a_brute-force_algorithm")
 					.get();
 		} catch (final IOException the_e) {
 			System.err.println(the_e);
@@ -45,6 +45,7 @@ public class JsoupFun {
 
 
 		String text = doc.body().text();
+		System.out.println(text);
 		System.out.println(text.length());
 		
 		
