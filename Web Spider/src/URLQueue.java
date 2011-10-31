@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 // TODO this must be synchronized.
+// TODO this probably shouldn't keep track of pages count.  URLs might not be able to be opened.
 /**
  * @author joncaddey
  * @version 1.0
