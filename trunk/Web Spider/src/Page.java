@@ -1,6 +1,3 @@
-import java.util.List;
-import java.util.Set;
-
 /*
  * OS Archons
  * 
@@ -10,6 +7,10 @@ import java.util.Set;
  * 
  * 2011-10-22
  */
+
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Holds information about this page.
@@ -23,12 +24,25 @@ public class Page {
 	/**
 	 * The URL this describes.
 	 */
-	private final String my_URL;
+	private final URL my_url;
 	
-	private int my_total_links;
-	
-	private int my_total_words;
+	private StringBuilder my_sb;
 
-	public Page(final String the_URL)
+
+	public Page(final URL the_url) {
+		my_url = the_url;
+	}
+	
+	public URL getURL() {
+		return my_url;
+	}
+	
+	public String getMarkup() {
+		return my_sb.toString();
+	}
+	
+	public void setMarkup(final StringBuilder the_sb) {
+		my_sb = the_sb;
+	}
 	
 }
