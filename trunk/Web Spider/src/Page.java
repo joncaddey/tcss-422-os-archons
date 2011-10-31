@@ -17,7 +17,7 @@ import java.util.Set;
  * @author joncaddey
  * @version 1.0
  */
-public class PageInfo {
+public class Page {
 
 	
 	/**
@@ -29,6 +29,6 @@ public class PageInfo {
 	
 	private int my_total_words;
 
-	public PageInfo(final String the_URL)
+	public Page(final String the_URL)
 	
 }
