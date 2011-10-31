@@ -106,12 +106,12 @@ public class URLQueue {
 	}
 	
 	/**
-	 * @return a URL to visit.
+	 * @return a Page to visit.
 	 */
 	// TODO TESTING COMPLETION DATE: 00-00-2011
 	// TODO FINALIZED AND APPROVED DATE: 00-00-2011
-	public URL deueue() {
-		return my_queue.removeLast();
+	public Page deueue() {
+		return new Page(my_queue.removeLast());
 	}
 	
 
