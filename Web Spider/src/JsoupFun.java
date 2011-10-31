@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -30,22 +32,37 @@ public class JsoupFun {
 	// TODO TESTING COMPLETION DATE: 00-00-2011
 	// TODO FINALIZED AND APPROVED DATE: 00-00-2011
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String html = "<p>An <a href='http://example.com/'><b>example</b></a> link.</p>";
 		Document doc = null;
+		StringBuilder sb = new StringBuilder();
+		URL url = null;
 		try {
-			doc = Jsoup
-					.connect(
-							"http://en.wikipedia.org/wiki/Sudoku_algorithms#Solving_Sudokus_by_a_brute-force_algorithm")
-					.get();
+			url = new URL("http://en.wikipedia.org/wiki/Werewolf");
+			URLConnection myURLConnection = url.openConnection();
+		    myURLConnection.connect();
+		    Scanner scanner = new Scanner(myURLConnection.getInputStream());
+		    while (scanner.hasNextLine()) {
+		    	String line = scanner.nextLine();
+		    	sb.append('\n');
+		    	//System.out.println(line);
+		    	sb.append(line);
+		    }
+		    myURLConnection.getInputStream().close();
+
+			
+//			doc = Jsoup
+//					.connect(
+//							"http://en.wikipedia.org/wiki/Werewolf")
+//					.get();
 		} catch (final IOException the_e) {
 			System.err.println(the_e);
+		} catch (Exception e) {
+			System.err.println(e);
 		}
 
 
+		doc = Jsoup.parse(sb.toString());
 
 		String text = doc.body().text();
-		System.out.println(text);
 		System.out.println(text.length());
 		
 		
