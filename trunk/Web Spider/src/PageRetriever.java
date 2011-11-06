@@ -8,7 +8,6 @@
  * 2011-10-30
  */
 import java.io.IOException;
-import java.net.URLConnection;
 import java.util.Scanner;
 
 /**
@@ -18,7 +17,7 @@ import java.util.Scanner;
 public class PageRetriever {
 	// TODO surely this has some field it could use.  why not have a static method otherwise?
     // TODO Be wary of timeouts! O.O
-	public void retrieve(Page the_page) throws IOException {	
+	public void retrieve(Page the_page) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		Scanner scanner = new Scanner(the_page.getURL().openStream());
 		while (scanner.hasNextLine()) {
