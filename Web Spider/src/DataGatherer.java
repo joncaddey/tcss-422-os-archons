@@ -20,5 +20,10 @@ public class DataGatherer {
 	private int my_total_words;
 	private int my_total_pages;
 	private Map<String, Integer> my_frequencies;
+	private Reporter my_reporter;
 
+	public DataGatherer(final String[] the_keywords, Reporter the_reporter)
+	{
+		my_reporter = the_reporter;
+	}
 }
