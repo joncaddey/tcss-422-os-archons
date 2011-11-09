@@ -1,4 +1,6 @@
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,13 +25,14 @@ import java.util.Set;
  */
 public class DataGatherer {
 
-	private int my_total_pages;
+	private static final int NANOS_IN_MILLI = 1000000;
 	private int my_total_words;
 	private int my_total_links;
 	private int my_pages_retrieved;
 	private Map<String, Integer> my_frequencies;
 	private ConsoleReporter my_reporter;
 	private final List<String> my_original_keywords;
+	private long my_start_time;
 
 	/**
 	 * Crawl responsibly--know your page limit.
@@ -56,56 +59,27 @@ public class DataGatherer {
 		return my_page_limit;
 	}
 
-	public void process(final Data the_data) {
+	public void process(final URL the_url, final int the_words, final int the_links, final Map<String, Integer> the_frequencies) {
 		my_pages_retrieved++;
-		my_total_words += the_data.getWords();
+		my_total_words += the_words;
 		for (String s : my_frequencies.keySet()) {
 			my_frequencies.put(s, my_frequencies.get(s)
-					+ the_data.getFrequencies().get(s));
+					+ the_frequencies.get(s));
 		}
-		my_total_links += the_data.getURLs().size();
-		
-		my_reporter.report(the_data);
+		my_total_links += the_links;
+
+		my_reporter.report(the_url, my_pages_retrieved, my_page_limit,
+				my_total_words, my_total_links,
+				Collections.unmodifiableMap(my_frequencies),
+				(int) ((System.nanoTime() - my_start_time) / NANOS_IN_MILLI));
 
 	}
-
-	public void reportData() {
-		// Parsed: www.tacoma.washington.edu/calendar/
-		// Pages Retrieved: 12
-		// Average words per page: 321
-		// Average URLs per page: 11
-		// Keyword Ave. hits per page Total hits
-		// albatross 0.001 3
-		// carrots 0.01 5
-		// everywhere 1.23 19
-		// etc..........
-		//
-		// intelligence 0.000 0
-		//
-		// Page limit: 5000
-		// Average parse time per page .001msec
-		// Total running time: 0.96 sec
-		/*
 	
-
-Report page
-URL just parsed							page
-Total pages at that time	so far
-total words							both
-total links							both
-frequencies							both
-page limit					dg
-start time					dg
-current time				
-
-Report summary
-summary:
-average time per trial
-
-
-
-
-		 */
+	public void startTrial() {
+		my_start_time = System.nanoTime();
 	}
+	
+	
+		
 
 }

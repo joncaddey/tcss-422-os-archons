@@ -36,7 +36,7 @@ import org.jsoup.select.Elements;
  */
 public class PageBuffer extends Observable
 {
-	private static final int THREAD_LIFE = Integer.MAX_VALUE;
+	private static final int THREAD_LIFE = 5000;
 	
 	private DataGatherer my_dg;
 	
@@ -81,7 +81,7 @@ public class PageBuffer extends Observable
 	private synchronized void sendBack(URL the_url, int the_words, Map<String, Integer> the_frequencies, Collection<URL> the_urls) {
 		if (my_pages_left > 0) {
 			my_pages_left--;
-			my_dg.process(new Data(the_url, the_words, the_frequencies, the_urls));
+			my_dg.process(the_url, the_words, the_urls.size(), the_frequencies);
 			setChanged();
 			notifyObservers(the_urls);
 		} else if (running) {
