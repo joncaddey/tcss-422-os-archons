@@ -85,6 +85,27 @@ public class DataGatherer {
 		// Page limit: 5000
 		// Average parse time per page .001msec
 		// Total running time: 0.96 sec
+		/*
+	
+
+Report page
+URL just parsed							page
+Total pages at that time	so far
+total words							both
+total links							both
+frequencies							both
+page limit					dg
+start time					dg
+current time				
+
+Report summary
+summary:
+average time per trial
+
+
+
+
+		 */
 	}
 
 }

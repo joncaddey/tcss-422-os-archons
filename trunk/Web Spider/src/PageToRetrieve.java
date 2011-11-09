@@ -38,7 +38,11 @@ public class PageToRetrieve extends Observable {
 		EXTENSIONS = Collections.unmodifiableCollection(extensions);
 	}
 	
-	private static final int DEFAULT_TIMEOUT = 50;
+	//long time = System.nanoTime();
+	
+	private int my_capacity;
+	
+	private static final int DEFAULT_TIMEOUT = 2500;
 
 	private  final BlockingQueue<Runnable> my_queue;
 
@@ -46,11 +50,12 @@ public class PageToRetrieve extends Observable {
 
 	private final Collection<String> my_visited = new HashSet<String>();
 
-	public PageToRetrieve(final int the_max_thread_count, URL[] ignore) {
+	public PageToRetrieve(final int the_max_thread_count, int the_capacity, URL[] ignore) {
 		for (URL url : ignore) {
-			my_visited.add(this.normalURL(url));
+			my_visited.add(normalURL(url));
 		}
-		 my_queue = new LinkedBlockingQueue<Runnable>();
+		my_queue = new LinkedBlockingQueue<Runnable>();
+		my_capacity = the_capacity;
 		my_tpe = new ThreadPoolExecutor(0,
 				the_max_thread_count, Integer.MAX_VALUE, TimeUnit.MILLISECONDS, my_queue);
 	}
@@ -66,7 +71,7 @@ public class PageToRetrieve extends Observable {
 	// TODO FINALIZED AND APPROVED DATE: 00-00-2011
 	public void enqueue(final URL the_url) {
 		String normal = normalURL(the_url);
-		if (!my_visited.contains(normal) && isValidURL(the_url)) {
+		if (my_queue.size() < my_capacity && !my_visited.contains(normal) && isValidURL(the_url)) {
 			my_visited.add(normal);
 			my_tpe.execute(new PageRetriever(new Page(the_url)));
 		}
@@ -128,26 +133,29 @@ public class PageToRetrieve extends Observable {
 		}
 
 		public void run() {
+//			synchronized (System.out){
+//				System.out.println((System.nanoTime() - time) / 1000000 + " between starting previous thread");
+//				time = System.nanoTime();
+//			}
+//			long start = System.nanoTime();
+			my_page.time = System.nanoTime();
 			StringBuilder sb = new StringBuilder();
 			Scanner scanner;
 			try {
-				URLConnection connection = my_page.getURL().openConnection();
-				connection.setConnectTimeout(DEFAULT_TIMEOUT);
-				scanner = new Scanner(my_page.getURL().openStream());
-				while (scanner.hasNextLine()) {
-					sb.append(scanner.nextLine());
-					sb.append('\n');
-				}
-				my_page.setMarkup(sb);
+				my_page.setMarkup(Jsoup.connect(my_page.getURL().toString()).timeout(DEFAULT_TIMEOUT).get());
 				sendBack(my_page);
 			} catch (Exception e) {
 				// TODO nothing
+//				System.out.println((System.nanoTime() - start) / 1000000 + " time wasted");
 
-			}
-			
+			}	
 			
 		}
 
+	}
+	
+	protected boolean hasEnqueued(final URL the_url) {
+		return my_visited.contains(normalURL(the_url));
 	}
 
 	public void shutdown() {

@@ -74,7 +74,7 @@ public class PageBuffer extends Observable
 	 * All my threads communicate with me through this synchronized method.  I in turn communicate to the outside world.
 	 * @param the_words total words found on the parsed page.
 	 * @param the_frequencies the keywords and how many keywords were found on that page.
-	 * @param the_urls the number of words found on the parsed page.
+	 * @param the_urls the number of links found on the parsed page.
 	 */
 	// TODO TESTING COMPLETION DATE: 00-00-2011
 	// TODO FINALIZED AND APPROVED DATE: 00-00-2011
@@ -113,7 +113,7 @@ public class PageBuffer extends Observable
 			}
 			
 			// build document from markup
-			Document doc = Jsoup.parse(my_page.getMarkup().toString());
+			Document doc = my_page.getMarkup();
 			
 			
 			// extract keywords
@@ -145,6 +145,7 @@ public class PageBuffer extends Observable
 				}
 			}
 			sendBack(my_page.getURL(), total_words, frequencies, urls);
+			
 		}
 	}
 }
