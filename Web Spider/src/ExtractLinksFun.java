@@ -49,9 +49,9 @@ public class ExtractLinksFun {
 //			}
 //		}
 		URL abs = new URL("http://java.sun.com/index.html");
-		URL rel = new URL(abs, "http://kotaku.com/index.html#hey");
-		System.out.println(rel.getProtocol());
-		System.out.println(rel.getPath());
+		URL rel = new URL(abs, "index.html#hey");
+		System.out.println(rel);
+
 
 
 	}
