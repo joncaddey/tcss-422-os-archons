@@ -10,6 +10,7 @@
 
 /**
  * @author Travis Jensen
+ * @author Jonathan Caddey
  * @version 1.0
  */
 public class Reporter
