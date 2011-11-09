@@ -29,6 +29,9 @@ import org.jsoup.Jsoup;
  * @version 1.0
  */
 public class PageToRetrieve extends Observable {
+	
+	private static final int THREAD_LIFE = 5000;
+	
 	private static final Collection<String> EXTENSIONS;
 	static {
 		Collection<String> extensions = new HashSet<String>();
@@ -57,7 +60,7 @@ public class PageToRetrieve extends Observable {
 		my_queue = new LinkedBlockingQueue<Runnable>();
 		my_capacity = the_capacity;
 		my_tpe = new ThreadPoolExecutor(0,
-				the_max_thread_count, Integer.MAX_VALUE, TimeUnit.MILLISECONDS, my_queue);
+				the_max_thread_count, THREAD_LIFE, TimeUnit.MILLISECONDS, my_queue);
 	}
 
 	/**
