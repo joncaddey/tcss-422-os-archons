@@ -99,7 +99,7 @@ public class PageToRetrieve extends Observable {
 	// TESTING COMPLETION DATE: 10-30-2011
 	// TODO FINALIZED AND APPROVED DATE: 00-00-2011
 	public boolean isValidURL(final URL the_url) {
-		boolean valid = true;
+		boolean valid = the_url.getProtocol().equals("http");
 		final String path = the_url.getPath();
 		if (path.length() != 0 && !path.endsWith("/")) {
 			int period = path.lastIndexOf('.');
