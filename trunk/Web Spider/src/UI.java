@@ -68,7 +68,7 @@ public class UI {
 		}
 	}
 	
-	private static final int DEFAULT_LIMIT = 100;
+	private static final int DEFAULT_LIMIT = 10;
 	private static final int MAX_LIMIT = 10000;
 	private static final List<String> DEFAULT_KEYWORDS = Arrays.asList(new String[] {
 		"intelligence", "artificial", "agent", "university", "research", "science", "robot"
@@ -76,7 +76,7 @@ public class UI {
 	private static final int DEFAULT_PARSERS = 1;
 	private static final int DEFAULT_RETRIEVERS = 1;
 	private static final String DEFAULT_SEED = "http://faculty.washington.edu/gmobus/";
-	private static final String[] DEFAULT_IGNORE = new String[] {"http://questioneverything.typepad.com/"};
+	private static final String DEFAULT_IGNORE = "http://questioneverything.typepad.com/";
 	private static final int DEFAULT_TRIALS = 1;
 	
 	
@@ -84,12 +84,20 @@ public class UI {
 	private static List<String> my_keywords = new ArrayList<String>(DEFAULT_KEYWORDS);
 	private static int my_parsers = DEFAULT_PARSERS;
 	private static int my_retrievers = DEFAULT_RETRIEVERS;
-	private static String my_seed = DEFAULT_SEED;
-	private static String[] my_ignore = DEFAULT_IGNORE;
+	private static URL my_seed;
+	private static URL[] my_ignore;
 	private static int my_trials = DEFAULT_TRIALS;
 
 	public static void main(final String[] the_args) {
 	
+		// initialize URLs
+		try {
+			my_ignore = new URL[]{new URL(DEFAULT_IGNORE)};
+			my_seed = new URL(DEFAULT_SEED);
+		} catch (MalformedURLException e) {
+			my_ignore = new URL[]{};
+		}
+		
 		// waiting is null whenever the previous argument was not an option.
 		Option waiting = null;
 		
@@ -118,7 +126,7 @@ public class UI {
 						// single '-' do nothing.
 					}
 				} else {
-					System.out.println("Expected an option but found \'" + arg + "\' instead");
+					System.err.println("Expected an option but found \'" + arg + "\' instead");
 				}
 			// expecting an argument
 			} else {
@@ -127,8 +135,11 @@ public class UI {
 			}
 		}
 		
+		start();
+		
 	}
-
+	
+	
 	/**
 	 * Interprets an argument as if preceded by a given option.
 	 * 
@@ -165,19 +176,28 @@ public class UI {
 			my_parsers = Integer.parseInt(the_argument);
 			break;
 		case SEED:
-			my_seed = the_argument;
+			try {
+				my_seed = new URL(the_argument);
+			} catch (MalformedURLException e1) {
+				System.out.println(the_argument + " could not be resolved as a URL.");
+			}
 			break;
 		case TRIALS:
 			my_trials = Integer.parseInt(the_argument);
 			break;
 		case IGNORE: {
-				List<String> ignore = new ArrayList<String>();
+				List<URL> ignore = new ArrayList<URL>();
 				Scanner scanner = new Scanner(the_argument);
 				scanner.useDelimiter(WHITESPACE_DELIMITER);
 				while (scanner.hasNext()) {
-					ignore.add(scanner.next().toLowerCase());
+					String line = scanner.next();
+					try {
+						ignore.add(new URL(line));
+					} catch (MalformedURLException e) {
+						System.err.println(line + " could not be resolved as a URL.");
+					}
 				}
-				my_ignore = new String[ignore.size()];
+				my_ignore = new URL[ignore.size()];
 				for (int i = 0; i < my_ignore.length; i++) {
 					my_ignore[i] = ignore.get(i);
 				}
@@ -190,47 +210,15 @@ public class UI {
 		
 		}
 	}
+	
 
-	public static void mainz(final String[] the_args) {
-		// Initialize the DataGatherer. (uses reporter as a reference to send
-		// data to.)
-		Scanner scan = new Scanner(System.in);
-		System.out.println("Enter keywords, separated by spaces:");
-		Scanner keyword_scanner = new Scanner(scan.nextLine());
-		keyword_scanner.useDelimiter("\\s+");
-		List<String> keywords = new ArrayList<String>();
-		while (keyword_scanner.hasNext()) {
-			keywords.add(keyword_scanner.next());
-		}
-		System.out.println(keywords);
-		System.out.println("Maximum pages visited: ");
-		int maxPagesVisited = scan.nextInt();
-		scan.close();
-		Reporter reporter = new Reporter();
-		DataGatherer dg = new DataGatherer(keywords, maxPagesVisited, reporter);
-
-		// Initialize the PageBuffer. (uses dg as a reference so PageParsers can
-		// send data to it.)
-		PageBuffer pb = new PageBuffer(dg, MAX_THREAD_COUNT);
-
-		URL ignore = null;
-		try {
-			ignore = new URL("http://questioneverything.typepad.com/");
-		} catch (MalformedURLException e1) {
-		}
-
-		PageToRetrieve ptr = new PageToRetrieve(MAX_THREAD_COUNT,
-				new URL[] { ignore });
-
-		Controller controller = new Controller(pb, ptr);
-
-		// Send PageToRetrieve the first URL.
-		URL url;
-		try {
-			url = new URL("http://faculty.washington.edu/gmobus/");
-			controller.start(url);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
+	private static void start() {
+		ConsoleReporter reporter = new ConsoleReporter();
+		DataGatherer gatherer = new DataGatherer(my_keywords, my_limit, reporter);
+		PageBuffer page_buffer = new PageBuffer(my_parsers, gatherer);
+		PageToRetrieve retriever = new PageToRetrieve(my_retrievers, my_ignore);
+		Controller controller = new Controller(retriever, page_buffer);
+		controller.start(my_seed);
 	}
+
 }

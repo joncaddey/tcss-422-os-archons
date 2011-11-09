@@ -28,7 +28,7 @@ public class DataGatherer {
 	private int my_total_links;
 	private int my_pages_retrieved;
 	private Map<String, Integer> my_frequencies;
-	private Reporter my_reporter;
+	private ConsoleReporter my_reporter;
 	private final List<String> my_original_keywords;
 
 	/**
@@ -37,7 +37,7 @@ public class DataGatherer {
 	private final int my_page_limit;
 
 	public DataGatherer(final List<String> the_keywords,
-			final int the_page_limit, Reporter the_reporter) {
+			final int the_page_limit, ConsoleReporter the_reporter) {
 		my_original_keywords = new ArrayList<String>(the_keywords);
 		my_reporter = the_reporter;
 		my_page_limit = the_page_limit;
@@ -64,6 +64,8 @@ public class DataGatherer {
 					+ the_data.getFrequencies().get(s));
 		}
 		my_total_links += the_data.getURLs().size();
+		
+		my_reporter.report(the_data);
 
 	}
 
