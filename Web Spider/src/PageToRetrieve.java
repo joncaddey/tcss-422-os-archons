@@ -8,6 +8,7 @@
  * Nov 3, 2011
  */
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
@@ -20,6 +21,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.jsoup.Jsoup;
+
 /**
  * @author Travis Jensen
  * @author Jonathan Caddey
@@ -27,8 +30,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class PageToRetrieve extends Observable {
 	private static final Collection<String> EXTENSIONS;
-
-	public static final int DEFAULT_TIMEOUT = 3000;
 	static {
 		Collection<String> extensions = new HashSet<String>();
 		extensions.add("HTML");
@@ -36,6 +37,10 @@ public class PageToRetrieve extends Observable {
 		extensions.add("TXT");
 		EXTENSIONS = Collections.unmodifiableCollection(extensions);
 	}
+	
+	private static final int DEFAULT_TIMEOUT = 50;
+
+	private  final BlockingQueue<Runnable> my_queue;
 
 	private ThreadPoolExecutor my_tpe;
 
@@ -45,9 +50,9 @@ public class PageToRetrieve extends Observable {
 		for (URL url : ignore) {
 			my_visited.add(this.normalURL(url));
 		}
-		BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
-		my_tpe = new ThreadPoolExecutor(the_max_thread_count,
-				the_max_thread_count, 3000, TimeUnit.MILLISECONDS, queue);
+		 my_queue = new LinkedBlockingQueue<Runnable>();
+		my_tpe = new ThreadPoolExecutor(0,
+				the_max_thread_count, Integer.MAX_VALUE, TimeUnit.MILLISECONDS, my_queue);
 	}
 
 	/**
@@ -139,12 +144,15 @@ public class PageToRetrieve extends Observable {
 				// TODO nothing
 
 			}
+			
+			
 		}
 
 	}
 
-	public void terminate() {
+	public void shutdown() {
 		my_tpe.shutdown();
+		my_queue.clear();
 	}
 
 	// public static void main (String args[]) throws Exception {

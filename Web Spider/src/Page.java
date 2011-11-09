@@ -12,6 +12,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+import org.jsoup.nodes.Document;
+
 /**
  * Holds information about this page.
  * 
@@ -20,14 +22,13 @@ import java.util.Set;
  */
 public class Page {
 
-	
 	/**
 	 * The URL this describes.
 	 */
 	private final URL my_url;
 	
 	private StringBuilder my_sb;
-
+	
 
 	public Page(final URL the_url) {
 		my_url = the_url;

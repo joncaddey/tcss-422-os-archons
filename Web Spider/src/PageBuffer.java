@@ -36,23 +36,28 @@ import org.jsoup.select.Elements;
  */
 public class PageBuffer extends Observable
 {
+	private static final int THREAD_LIFE = Integer.MAX_VALUE;
+	
 	private DataGatherer my_dg;
 	
 	private ThreadPoolExecutor my_tpe;
 	
 	private Set<String> my_keywords;
 	
-	private int my_pages_retrieved;
+	private int my_pages_left;
 	
 	private boolean running = true;
+	
+	private BlockingQueue<Runnable> my_queue;
 		
-	public PageBuffer(final DataGatherer the_dg, final int the_max_thread_count)
+	public PageBuffer(final int the_max_thread_count, final DataGatherer the_dg)
 	{
 		my_dg = the_dg;
 		my_keywords = the_dg.getKeywords();
-		BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
-		my_tpe = new ThreadPoolExecutor(the_max_thread_count, the_max_thread_count,
-				3000, TimeUnit.MILLISECONDS, queue);
+		my_queue = new LinkedBlockingQueue<Runnable>();
+		my_tpe = new ThreadPoolExecutor(0, the_max_thread_count,
+				THREAD_LIFE, TimeUnit.MILLISECONDS, my_queue);
+		my_pages_left = my_dg.getPageLimit();
 	}
 	
 	//Input from PageToRetrieve is the_page that has markup.
@@ -74,16 +79,15 @@ public class PageBuffer extends Observable
 	// TODO TESTING COMPLETION DATE: 00-00-2011
 	// TODO FINALIZED AND APPROVED DATE: 00-00-2011
 	private synchronized void sendBack(URL the_url, int the_words, Map<String, Integer> the_frequencies, Collection<URL> the_urls) {
-		if (my_pages_retrieved < my_dg.getPageLimit()) {
-			my_pages_retrieved++;
+		if (my_pages_left > 0) {
+			my_pages_left--;
 			my_dg.process(new Data(the_url, the_words, the_frequencies, the_urls));
-			my_dg.reportData();
-			System.out.println(the_url);
 			setChanged();
 			notifyObservers(the_urls);
-		} else {
+		} else if (running) {
 			running = false;
 			my_tpe.shutdown();
+			my_queue.clear();
 			setChanged();
 			notifyObservers(false);
 		}
@@ -109,12 +113,13 @@ public class PageBuffer extends Observable
 			}
 			
 			// build document from markup
-			Document doc = Jsoup.parse(my_page.getMarkup().toString());	
+			Document doc = Jsoup.parse(my_page.getMarkup().toString());
+			
 			
 			// extract keywords
 			int total_words = 0;
 			String token;
-			if (doc.body() == null || doc.body().text() == null) {
+			if (doc == null || doc.body() == null) {
 				return;
 			}
 			Scanner scanner = new Scanner(doc.body().text());
