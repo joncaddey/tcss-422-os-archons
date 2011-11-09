@@ -17,6 +17,24 @@ import java.util.Map;
  * @version 1.0
  */
 public class Data {
+	
+	/*
+	
+Report page
+URL just parsed							page
+Total pages at that time	so far
+total words							both
+total links							both
+frequencies							both
+page limit					dg
+start time					dg
+current time				
+
+Report summary
+summary:
+average time per trial
+
+	 */
 
 	private final URL my_url;
 	private final int my_words;

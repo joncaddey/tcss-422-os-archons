@@ -28,7 +28,7 @@ public class URLQueueTest {
 	private static URL NO_ANCHOR;
 	private static URL ANCHOR;
 	
-	private URLQueue my_queue;
+	private PageToRetrieve my_queue;
 	
 	@BeforeClass
 	public static void setupClass() {
@@ -36,7 +36,7 @@ public class URLQueueTest {
 			VALID_HTML = new URL("http://faculty.washington.edu/gmobus/Academics/TCSS422/Projects/program1.html");
 			VALID_TXT = new URL("http://kotaku.com/robots.txt");
 			VALID_HOST = new URL("http://kotaku.com");
-			NOT_VALID = new URL("http://kotaku.com/5854646/creepshow");
+			NOT_VALID = new URL("mailto://gmobus@u.washington.edu");
 			NOT_VALID_PHP = new URL("http://php.net/manual/en/ref.strings.php");
 			NO_ANCHOR = new URL("http://en.wikipedia.org/wiki/Sudoku_algorithms");
 			ANCHOR = new URL("http://en.wikipedia.org/wiki/Sudoku_algorithms#Solving_Sudokus_by_a_brute-force_algorithm");
@@ -47,7 +47,7 @@ public class URLQueueTest {
 	
 	@Before
 	public void setup() {
-		my_queue = new URLQueue();
+		my_queue = new PageToRetrieve(1, new URL[]{});
 	}
 	
 	@Test
@@ -65,12 +65,12 @@ public class URLQueueTest {
 	
 	@Test
 	public void normalizeURLTest() {
-		assertEquals(URLQueue.normalURL(NO_ANCHOR), URLQueue.normalURL(ANCHOR));
+		assertEquals(PageToRetrieve.normalURL(NO_ANCHOR), PageToRetrieve.normalURL(ANCHOR));
 	}
 	
 	@Test
 	public void constructorIgnoreTest() {
-		URLQueue queue = new URLQueue(5000, Arrays.asList(new URL[]{VALID_HTML}));
+		PageToRetrieve queue = new PageToRetrieve(1, new URL[]{VALID_HTML});
 		assertTrue(queue.hasEnqueued(VALID_HTML));
 		assertFalse(queue.hasEnqueued(VALID_TXT));	
 	}

@@ -22,28 +22,28 @@ import org.jsoup.nodes.Document;
  */
 public class Page {
 
+	long time;
 	/**
 	 * The URL this describes.
 	 */
 	private final URL my_url;
-	
-	private StringBuilder my_sb;
-	
+
+	private Document my_document;
 
 	public Page(final URL the_url) {
 		my_url = the_url;
 	}
-	
+
 	public URL getURL() {
 		return my_url;
 	}
-	
-	public String getMarkup() {
-		return my_sb.toString();
+
+	public Document getMarkup() {
+		return my_document;
 	}
-	
-	public void setMarkup(final StringBuilder the_sb) {
-		my_sb = the_sb;
+
+	public void setMarkup(final Document the_document) {
+		my_document = the_document;
 	}
-	
+
 }

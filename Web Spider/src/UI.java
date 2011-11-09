@@ -53,7 +53,7 @@ public class UI {
 		 * 
 		 * @param the_string
 		 *            an option.
-		 * @return the Option, or null if there is no Option corrosponding to the_string.
+		 * @return the Option, or null if there is no Option corresponding to the_string.
 		 */
 		public static Option getOption(final String the_string) {
 			String str = the_string.toLowerCase();
@@ -216,7 +216,7 @@ public class UI {
 		ConsoleReporter reporter = new ConsoleReporter();
 		DataGatherer gatherer = new DataGatherer(my_keywords, my_limit, reporter);
 		PageBuffer page_buffer = new PageBuffer(my_parsers, gatherer);
-		PageToRetrieve retriever = new PageToRetrieve(my_retrievers, my_ignore);
+		PageToRetrieve retriever = new PageToRetrieve(my_retrievers, my_limit * 2, my_ignore);
 		Controller controller = new Controller(retriever, page_buffer);
 		controller.start(my_seed);
 	}
