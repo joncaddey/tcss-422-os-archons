@@ -44,8 +44,6 @@ public class PageBuffer extends Observable
 	
 	private Set<String> my_keywords;
 	
-	private int my_pages_left;
-	
 	private boolean running = true;
 	
 	private BlockingQueue<Runnable> my_queue;
@@ -57,7 +55,6 @@ public class PageBuffer extends Observable
 		my_queue = new LinkedBlockingQueue<Runnable>();
 		my_tpe = new ThreadPoolExecutor(0, the_max_thread_count,
 				THREAD_LIFE, TimeUnit.MILLISECONDS, my_queue);
-		my_pages_left = my_dg.getPageLimit();
 	}
 	
 	//Input from PageToRetrieve is the_page that has markup.
@@ -79,20 +76,9 @@ public class PageBuffer extends Observable
 	// TODO TESTING COMPLETION DATE: 00-00-2011
 	// TODO FINALIZED AND APPROVED DATE: 00-00-2011
 	private synchronized void sendBack(URL the_url, int the_words, Map<String, Integer> the_frequencies, Collection<URL> the_urls) {
-		if (my_pages_left > 0) {
-			my_pages_left--;
 			my_dg.process(the_url, the_words, the_urls.size(), the_frequencies);
 			setChanged();
 			notifyObservers(the_urls);
-		} else if (running) {
-			running = false;
-			my_tpe.shutdown();
-			my_queue.clear();
-			setChanged();
-			notifyObservers(false);
-		}
-		
-		
 	}
 	
 	
@@ -147,5 +133,10 @@ public class PageBuffer extends Observable
 			sendBack(my_page.getURL(), total_words, frequencies, urls);
 			
 		}
+	}
+	
+	public void shutdown() {
+		my_tpe.shutdown();
+		my_queue.clear();
 	}
 }

@@ -53,8 +53,8 @@ public class PageToRetrieve extends Observable {
 
 	private final Collection<String> my_visited = new HashSet<String>();
 
-	public PageToRetrieve(final int the_max_thread_count, int the_capacity, URL[] ignore) {
-		for (URL url : ignore) {
+	public PageToRetrieve(final int the_max_thread_count, int the_capacity, URL[] the_ignored) {
+		for (URL url : the_ignored) {
 			my_visited.add(normalURL(url));
 		}
 		my_queue = new LinkedBlockingQueue<Runnable>();
@@ -136,11 +136,6 @@ public class PageToRetrieve extends Observable {
 		}
 
 		public void run() {
-//			synchronized (System.out){
-//				System.out.println((System.nanoTime() - time) / 1000000 + " between starting previous thread");
-//				time = System.nanoTime();
-//			}
-//			long start = System.nanoTime();
 			my_page.time = System.nanoTime();
 			StringBuilder sb = new StringBuilder();
 			Scanner scanner;
@@ -149,8 +144,6 @@ public class PageToRetrieve extends Observable {
 				sendBack(my_page);
 			} catch (Exception e) {
 				// TODO nothing
-//				System.out.println((System.nanoTime() - start) / 1000000 + " time wasted");
-
 			}	
 			
 		}
@@ -166,8 +159,4 @@ public class PageToRetrieve extends Observable {
 		my_queue.clear();
 	}
 
-	// public static void main (String args[]) throws Exception {
-	// PageToRetrieve ptr = new PageToRetrieve(2);
-	// ptr.enqueue(new URL("http://faculty.washington.edu/gmobus/"));
-	// }
 }
