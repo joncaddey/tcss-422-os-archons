@@ -214,12 +214,9 @@ public class UI {
 
 	private static void start() {
 		ConsoleReporter reporter = new ConsoleReporter();
-		DataGatherer gatherer = new DataGatherer(my_keywords, my_limit, reporter);
-		gatherer.startTrial();
-		PageBuffer page_buffer = new PageBuffer(my_parsers, gatherer);
-		PageToRetrieve retriever = new PageToRetrieve(my_retrievers, my_limit * 2, my_ignore);
-		Controller controller = new Controller(retriever, page_buffer);
-		controller.start(my_seed);
+		DataGatherer gatherer = new DataGatherer(my_keywords, my_limit, my_trials, reporter);
+		Controller controller = new Controller(my_seed, my_ignore, my_retrievers, my_parsers, gatherer);
+		controller.start();
 	}
 
 }

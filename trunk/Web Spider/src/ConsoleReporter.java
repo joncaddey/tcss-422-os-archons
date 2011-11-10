@@ -17,7 +17,8 @@ import java.util.Map;
  * @version 1.0
  */
 public class ConsoleReporter {
-	private final int MILLIS_IN_SECOND = 1000;
+	private static final int MILLIS_IN_SECOND = 1000;
+	private static final String BORDER = "==============================================================";
 	
 	public void report(final URL the_url, final int the_page_num,
 			final int the_page_limit, final int the_words, final int the_links,
@@ -59,5 +60,22 @@ public class ConsoleReporter {
 		System.out.println();
 		System.out.println();
 	}
+	
+	public void reportSummary(final int the_trial, final int the_trial_limit, final int the_total_time) {
+		System.out.println();
+		System.out.println("Trial " + the_trial + " of " + the_trial_limit + " complete!");
+		System.out.printf("Avg time: %.3f sec", (double) the_total_time / the_trial / MILLIS_IN_SECOND);
+		System.out.println();
+		System.out.println();
+		System.out.println();
+	}
 
+	public void reportStart(final int trial_num) {
+		System.out.println(BORDER);
+		System.out.println();
+		System.out.println("Starting trial " + trial_num);
+		System.out.println();
+		System.out.println(BORDER);
+		System.out.println();
+	}
 }
