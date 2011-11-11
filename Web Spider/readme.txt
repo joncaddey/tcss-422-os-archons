@@ -5,3 +5,5 @@ Tested the latency between notifyingObservers and actually getting the notificat
 Assuming time issues is due to my connection.
 
 Would be nice to add average size of queues relative to number of pages?  Or at least average size of printBuffer.
+
+2.5 seconds to shut down.
