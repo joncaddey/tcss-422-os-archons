@@ -9,8 +9,6 @@
  */
 
 import java.net.URL;
-import java.util.List;
-import java.util.Set;
 
 import org.jsoup.nodes.Document;
 
@@ -18,14 +16,12 @@ import org.jsoup.nodes.Document;
  * Holds information about this page.
  * 
  * @author joncaddey
+ * @author Travis Jensen
  * @version 1.0
  */
 public class Page {
 
-	long time;
-	/**
-	 * The URL this describes.
-	 */
+
 	private final URL my_url;
 
 	private Document my_document;
@@ -45,5 +41,4 @@ public class Page {
 	public void setMarkup(final Document the_document) {
 		my_document = the_document;
 	}
-
 }

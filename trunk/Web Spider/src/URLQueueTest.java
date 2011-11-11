@@ -8,12 +8,16 @@
  * 2011-10-30
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * @author joncaddey
@@ -47,7 +51,7 @@ public class URLQueueTest {
 	
 	@Before
 	public void setup() {
-		my_queue = new PageToRetrieve(1, new URL[]{});
+		my_queue = new PageToRetrieve(1, 10, new URL[]{});
 	}
 	
 	@Test
@@ -70,7 +74,7 @@ public class URLQueueTest {
 	
 	@Test
 	public void constructorIgnoreTest() {
-		PageToRetrieve queue = new PageToRetrieve(1, new URL[]{VALID_HTML});
+		PageToRetrieve queue = new PageToRetrieve(1, 10, new URL[]{VALID_HTML});
 		assertTrue(queue.hasEnqueued(VALID_HTML));
 		assertFalse(queue.hasEnqueued(VALID_TXT));	
 	}
