@@ -1,0 +1,1 @@
+School project with cool name.  Will explore operating systems concepts and starcraft 2.
